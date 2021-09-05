@@ -1,5 +1,4 @@
-#
-# Copyright 2020 The Android Open Source Project
+# Copyright 2021 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,8 +18,7 @@
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
 
 # define hardware platform
-PRODUCT_PLATFORM := sm7150
-PLATFORM_PATH := device/motorola/hanoip
+PRODUCT_PLATFORM := sm6150
 
 # A/B support
 AB_OTA_UPDATER := true
@@ -37,18 +35,7 @@ AB_OTA_PARTITIONS += \
     vendor \
     vbmeta \
     vbmeta_system \
-    vendor_boot 
-
-
-PRODUCT_COPY_FILES += \
-	$(LOCAL_PATH)/fstab.qcom:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.qcom
-
-PRODUCT_COPY_FILES += device/motorola/hanoip/fstab.qcom:$(TARGET_COPY_OUT_VENDOR)/etc/fstab.qcom
-
-	
-PRODUCT_COPY_FILES += \
-    $(PLATFORM_PATH)/recovery/root/vendor/lib/modules/1.1/aw8646.ko:$(TARGET_COPY_OUT_RECOVERY)/root/vendor/lib/modules/1.1/aw8646.ko \
-    $(PLATFORM_PATH)/recovery/root/vendor/lib/modules/1.1/ilitek_v3_mmi.ko:$(TARGET_COPY_OUT_RECOVERY)/root/vendor/lib/modules/1.1/ilitek_v3_mmi.ko \
+    vendor_boot
 
 PRODUCT_PACKAGES += \
     otapreopt_script \
@@ -69,16 +56,11 @@ AB_OTA_POSTINSTALL_CONFIG += \
 # tell update_engine to not change dynamic partition table during updates
 # needed since our qti_dynamic_partitions does not include
 # vendor and odm and we also dont want to AB update them
-TARGET_ENFORCE_AB_OTA_PARTITIPLATFORM_PATHON_LIST := true
+TARGET_ENFORCE_AB_OTA_PARTITION_LIST := true
 
 # Boot control HAL
 PRODUCT_PACKAGES += \
-    android.hardware.boot@1.0-impl \
-    android.hardware.boot@1.0-service \
-    android.hardware.boot@1.0-impl-wrapper.recovery \
-    android.hardware.boot@1.0-impl-wrapper \
-    android.hardware.boot@1.0-impl.recovery \
-    bootctrl.$(PRODUCT_PLATFORM) \
+    android.hardware.boot@1.1-impl-qti.recovery \
     bootctrl.$(PRODUCT_PLATFORM).recovery
 
 # Apex libraries
@@ -87,6 +69,11 @@ PRODUCT_HOST_PACKAGES += \
 
 # Dynamic partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
+
+# fastbootd
+PRODUCT_PACKAGES += \
+    android.hardware.fastboot@1.0-impl-mock \
+    fastbootd
 
 # qcom standard decryption
 PRODUCT_PACKAGES += \
@@ -107,4 +94,4 @@ PRODUCT_SYSTEM_PROPERTY_BLACKLIST += \
     ro.build.date.utc
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.vendor.build.security_patch=2021-09-01
+    ro.vendor.build.security_patch=2099-12-31
